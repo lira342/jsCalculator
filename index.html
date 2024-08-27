@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <title>jsCalculator by Lerato.org</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  
+  </head>
+  <body>
+    <div id="container-fluid">
+    <div class="row text-center">
+     <div class="col">
+      <h1>jsCalculator by Lerato.org</h1>
+       </div>
+    </div>
+    
+        <div class="row text-center">
+         <div class="col">
+            <div id="display" class="bg-info text-white my-3 py-5">0</div> 
+         </div>
+        </div>
+
+    <div class="row text-center">
+    <div class="col-4">
+        <button class="number btn btn-block btn-success" id="zero">0</button>
+        <button class="number btn btn-block btn-success" id="one">1</button>
+        <button class="number btn btn-block btn-success" id="two">2</button>
+        <button  class="btn btn-block btn-danger" id="equals">=</button>
+    </div>
+    <div class="col-4">
+        <button class="number btn btn-block btn-success" id="three">3</button>
+        <button class="number btn btn-block btn-success" id="four">4</button>
+        <button class="number btn btn-block btn-success" id="five">5</button>
+        <button class="btn btn-block btn-warning" id="clear">AC</button>
+    </div>
+    <div class="col-4">
+        <button class="number btn btn-block btn-success" id="six">6</button>
+        <button class="number btn btn-block btn-success" id="seven">7</button>
+        <button class="number btn btn-block btn-success" id="eight">8</button>
+        <button class="number btn btn-block btn-success" id="nine">9</button>
+    </div>
+    <div class="row text-center pt-3">
+        <div class="col">
+            <button class="operator btn btn-block btn-success" id="add">+</button>
+        </div>
+        <div class="col">
+            <button class="operator btn btn-block btn-success" id="subtract">-</button>
+        
+        </div>
+        <div class="col">
+            <button class="operator btn btn-block btn-success" id="multiply">*</button>
+        </div>
+        <div class="col">
+            <button class="operator btn btn-block btn-success" id="divide">/</button>
+        </div>
+        <div class="col">
+            <button  class="btn btn-block btn-success" id="decimal">.</button>
+        </div>
+     </div>
+   </div>
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let expression = '';
+      let result = '';
+      let isDecimal = false;
+
+      const display = document.getElementById('display');
+
+      const clearButton = document.getElementById('clear');
+      clearButton.addEventListener('click', function () {
+        expression = '';
+        result = '';
+        isDecimal = false;
+        display.textContent = '0';
+      });
+
+      const numbers = document.querySelectorAll('.number');
+      numbers.forEach(function (number) {
+        number.addEventListener('click', function () {
+          if (result !== '') {
+            expression = '';
+            result = '';
+            isDecimal = false;
+          }
+
+          if (number.id === 'zero') {
+            if (expression === '' || expression === '0') {
+              return;
+            } 
+            else if (expression.length === 1 && expression === '-') {
+              return;
+            }
+          }
+
+          expression += number.textContent;
+          display.textContent = expression;
+        });
+      });
+
+      const operators = document.querySelectorAll('.operator');
+      operators.forEach(function (operator) {
+        operator.addEventListener('click', function () {
+          if (result !== '') {
+            expression = result;
+            result = '';
+          }
+
+          if (expression !== '' && !isOperator(expression.slice(-1))) {
+            expression += operator.textContent;
+            display.textContent = operator.textContent;
+            isDecimal = false;
+          } 
+          else if (isOperator(expression.slice(-1)) && operator.textContent !== '-' && expression.slice(-1) !== '-') {
+            expression = expression.slice(0, -1) + operator.textContent;
+            display.textContent = operator.textContent;
+          }
+        });
+      });
+
+      const decimalButton = document.getElementById('decimal');
+      decimalButton.addEventListener('click', function () {
+        if (result !== '') {
+          expression = '';
+          result = '';
+        }
+
+        if (expression === '') {
+          expression = '0';
+        }
+
+        if (!isDecimal && !expression.endsWith('.')) {
+          expression += '.';
+          display.textContent = expression;
+          isDecimal = true;
+        }
+      });
+
+      const equalsButton = document.getElementById('equals');
+      equalsButton.addEventListener('click', function () {
+        if (expression !== '' && !isOperator(expression.slice(-1))) {
+          result = evaluateExpression(expression);
+          display.textContent = result;
+          expression = '';
+          isDecimal = false;
+        }
+      });
+
+      function isOperator(char) {
+        return char === '+' || char === '-' || char === '*' || char === '/';
+      }
+
+      function evaluateExpression(expression) {
+        let evaluated = eval(expression);
+        evaluated = Math.round(evaluated * 10000) / 10000;
+        evaluated = evaluated.toString();
+        if (evaluated.indexOf('.') !== -1) {
+          evaluated = evaluated.replace(/0+$/, '');
+          evaluated = evaluated.replace(/\.$/, '');
+        }
+        return evaluated;
+      }
+    });
+  </script>
+  </body>
+  </html>
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+</body>
+</html>
